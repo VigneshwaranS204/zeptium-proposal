@@ -1,0 +1,370 @@
+<title>Zeptium SEO Growth Report</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a single reading column with a patch-panel motif. Every finding carries a port-status LED
+   (red / amber / green) the way a network switch reports link state. */
+:root{
+  --bg:#f5f7fa; --surface:#ffffff; --ink:#0f1c2e; --muted:#51607a; --line:#d9e0ea; --panel:#0f1c2e; --panel-ink:#eaf1fb;
+  --accent:#0a6fb8; --accent-soft:#e3f0fa;
+  --crit:#c8321f; --crit-soft:#fbe9e6; --warn:#b26a00; --warn-soft:#fdf1dc; --good:#177a4c; --good-soft:#e2f4ea;
+  --display:"Archivo","Arial Narrow",Arial,sans-serif; --body:"IBM Plex Sans",system-ui,-apple-system,Segoe UI,sans-serif; --mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0b131f; --surface:#131e2e; --ink:#e8eef7; --muted:#9fb0c8; --line:#27364b; --panel:#1a2940; --panel-ink:#eaf1fb;
+  --accent:#5db4f0; --accent-soft:#16304a;
+  --crit:#ff8a78; --crit-soft:#3a1b17; --warn:#f2b755; --warn-soft:#3a2a10; --good:#5fd39a; --good-soft:#12301f; color-scheme:dark } }
+:root[data-theme="dark"]{
+  --bg:#0b131f; --surface:#131e2e; --ink:#e8eef7; --muted:#9fb0c8; --line:#27364b; --panel:#1a2940; --panel-ink:#eaf1fb;
+  --accent:#5db4f0; --accent-soft:#16304a;
+  --crit:#ff8a78; --crit-soft:#3a1b17; --warn:#f2b755; --warn-soft:#3a2a10; --good:#5fd39a; --good-soft:#12301f; color-scheme:dark }
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.6;margin:0}
+.wrap{max-width:1040px;margin:0 auto;padding-inline:20px;padding-block:32px 72px;display:flex;flex-direction:column;gap:56px}
+h1,h2,h3{font-family:var(--display);font-stretch:112%;text-wrap:balance;margin:0;line-height:1.15}
+h1{font-size:clamp(1.9rem,4.5vw,3rem);font-weight:800;letter-spacing:-.01em}
+h2{font-size:clamp(1.4rem,3vw,1.9rem);font-weight:700}
+h3{font-size:1.08rem;font-weight:700;font-stretch:105%}
+p{margin:0;max-width:68ch}
+a{color:var(--accent)}
+a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.eyebrow{font-family:var(--mono);font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+.muted{color:var(--muted)}
+.mono{font-family:var(--mono);font-size:.86em;overflow-wrap:anywhere}
+section{display:flex;flex-direction:column;gap:20px}
+.sec-head{display:flex;flex-direction:column;gap:8px}
+
+/* header */
+header.top{display:flex;flex-direction:column;gap:18px;padding-bottom:28px;border-bottom:1px solid var(--line)}
+.meta{display:flex;flex-wrap:wrap;gap:8px 24px;font-family:var(--mono);font-size:.82rem;color:var(--muted)}
+nav.toc{display:flex;flex-wrap:wrap;gap:8px}
+nav.toc a{font-size:.88rem;text-decoration:none;padding:8px 12px;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--ink)}
+nav.toc a:hover{border-color:var(--accent);color:var(--accent)}
+
+/* patch-panel stat strip */
+.panel{background:var(--panel);color:var(--panel-ink);border-radius:10px;padding:22px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px}
+.port{padding:6px 18px;border-left:1px solid rgba(255,255,255,.14);display:flex;flex-direction:column;gap:4px;min-width:0}
+.port:first-child{border-left:0;padding-left:0}
+.port .num{font-family:var(--display);font-stretch:118%;font-weight:800;font-size:clamp(1.8rem,4vw,2.6rem);line-height:1;font-variant-numeric:tabular-nums}
+.port .lbl{font-size:.86rem;opacity:.85}
+.port .state{font-family:var(--mono);font-size:.74rem;display:flex;align-items:center;gap:6px;text-transform:uppercase;letter-spacing:.08em}
+.led{width:9px;height:9px;border-radius:50%;flex:none;display:inline-block}
+.led.crit{background:#ff6a55;box-shadow:0 0 0 3px rgba(255,106,85,.22)}
+.led.warn{background:#f5b63f;box-shadow:0 0 0 3px rgba(245,182,63,.22)}
+.led.good{background:#4fd08f;box-shadow:0 0 0 3px rgba(79,208,143,.22)}
+@media (max-width:720px){.panel{grid-template-columns:repeat(2,minmax(0,1fr));gap:18px 0}.port:nth-child(3){border-left:0;padding-left:0}}
+
+.verdict{font-size:1.12rem;border-left:3px solid var(--accent);padding-left:16px}
+
+/* two-up */
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+@media (max-width:760px){.grid2{grid-template-columns:1fr}}
+.box{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:20px;display:flex;flex-direction:column;gap:14px;min-width:0}
+
+/* score bars */
+.bars{display:flex;flex-direction:column;gap:12px}
+.bar-row{display:grid;grid-template-columns:110px 1fr 34px;gap:10px;align-items:center;font-size:.9rem}
+.track{height:10px;background:var(--line);border-radius:5px;overflow:hidden}
+.fill{height:100%;border-radius:5px}
+.fill.crit{background:var(--crit)}.fill.warn{background:var(--warn)}.fill.good{background:var(--good)}
+.bar-row b{font-family:var(--mono);font-weight:500;text-align:right;font-variant-numeric:tabular-nums}
+
+table{border-collapse:collapse;width:100%;font-size:.92rem}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+thead th{font-family:var(--mono);font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:500}
+td.n{font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+.scroll{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+.scroll table{min-width:620px}
+.scroll tr:last-child td{border-bottom:0}
+
+.tag{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:.74rem;letter-spacing:.06em;text-transform:uppercase;padding:3px 9px;border-radius:999px;white-space:nowrap}
+.tag.crit{background:var(--crit-soft);color:var(--crit)}
+.tag.warn{background:var(--warn-soft);color:var(--warn)}
+.tag.good{background:var(--good-soft);color:var(--good)}
+.tag.info{background:var(--accent-soft);color:var(--accent)}
+
+/* gaps */
+.gaps{display:flex;flex-direction:column;gap:14px}
+.gap{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:20px;display:grid;grid-template-columns:minmax(0,1fr);gap:10px}
+.gap-head{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;justify-content:space-between}
+.gap ul{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:4px}
+.gap .fix{border-top:1px dashed var(--line);padding-top:10px;font-size:.95rem}
+.gap .fix strong{color:var(--accent)}
+
+/* plan */
+.plan{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+@media (max-width:860px){.plan{grid-template-columns:1fr}}
+.phase{background:var(--surface);border:1px solid var(--line);border-top:4px solid var(--accent);border-radius:10px;padding:20px;display:flex;flex-direction:column;gap:12px}
+.phase .when{font-family:var(--mono);font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.phase ul{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:8px;font-size:.95rem}
+
+.opps{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+@media (max-width:760px){.opps{grid-template-columns:1fr}}
+.opp{padding:18px 0 0;border-top:2px solid var(--ink);display:flex;flex-direction:column;gap:8px}
+.opp p{font-size:.96rem}
+
+.note{background:var(--warn-soft);color:var(--ink);border-radius:8px;padding:14px 16px;font-size:.93rem;max-width:none}
+.note strong{color:var(--warn)}
+footer{border-top:1px solid var(--line);padding-top:24px;display:flex;flex-direction:column;gap:8px;font-size:.9rem;color:var(--muted)}
+@media (prefers-reduced-motion:no-preference){nav.toc a{transition:border-color .2s ease,color .2s ease}}
+</style>
+
+<div class="wrap">
+
+<header class="top">
+  <span class="eyebrow">SEO &amp; marketing opportunity report</span>
+  <h1>Zeptium Technologies: built to be found in Dubai, but not yet visible</h1>
+  <p class="muted">An audit of zeptium.com covering what is holding the site back, what to fix first, where the growth is, and which search terms to target.</p>
+  <div class="meta">
+    <span>Site: zeptium.com</span><span>Audit date: 4 Oct 2026</span>
+  </div>
+  <nav class="toc" aria-label="Report sections">
+    <a href="#snapshot">Snapshot</a><a href="#speed">Speed</a><a href="#gaps">Gaps</a><a href="#plan">Suggestions</a><a href="#opportunities">Opportunities</a><a href="#keywords">Keywords</a>
+  </nav>
+</header>
+
+<section id="snapshot">
+  <div class="sec-head"><span class="eyebrow">Snapshot</span><h2>Where the site stands today</h2></div>
+  <div class="panel" role="group" aria-label="Headline site metrics">
+    <div class="port"><span class="num">0</span><span class="lbl">Organic visits per month</span><span class="state"><span class="led crit"></span>Critical</span></div>
+    <div class="port"><span class="num">1</span><span class="lbl">Keyword ranking in Google</span><span class="state"><span class="led crit"></span>Critical</span></div>
+    <div class="port"><span class="num">81</span><span class="lbl">Backlinks</span><span class="state"><span class="led warn"></span>Low</span></div>
+    <div class="port"><span class="num">79</span><span class="lbl">On-page SEO score / 100</span><span class="state"><span class="led warn"></span>Fair</span></div>
+  </div>
+  <p class="verdict">Zeptium has 20 service pages already written for Dubai searches, and Google's own test scores the site 100 for SEO basics. Yet the site earns no measurable search traffic. The problem is not a lack of pages. It is broken links across the menu, a slow mobile experience, thin page copy and very little authority from other websites.</p>
+  <div class="grid2">
+    <div class="box">
+      <h3>What is already working</h3>
+      <table>
+        <tr><td><span class="tag good"><span class="led good"></span>Good</span></td><td>20 dedicated service pages with Dubai in the URL and title</td></tr>
+        <tr><td><span class="tag good"><span class="led good"></span>Good</span></td><td>Google Lighthouse SEO score 100 and accessibility 94</td></tr>
+        <tr><td><span class="tag good"><span class="led good"></span>Good</span></td><td>Valid SSL certificate, sitemap present, no duplicate titles</td></tr>
+        <tr><td><span class="tag good"><span class="led good"></span>Good</span></td><td>Clear consultation call to action and WhatsApp chat on every page</td></tr>
+      </table>
+    </div>
+    <div class="box">
+      <h3>Crawl health</h3>
+      <p class="muted">Of 58 URLs crawled, only 30 loaded normally.</p>
+      <div class="bars" role="img" aria-label="Crawl results: 30 successful, 15 redirected, 10 broken, 3 blocked, out of 58 URLs">
+        <div class="bar-row"><span>Successful</span><div class="track"><div class="fill good" style="width:51.7%"></div></div><b>30</b></div>
+        <div class="bar-row"><span>Redirected</span><div class="track"><div class="fill warn" style="width:25.9%"></div></div><b>15</b></div>
+        <div class="bar-row"><span>Broken</span><div class="track"><div class="fill crit" style="width:17.2%"></div></div><b>10</b></div>
+        <div class="bar-row"><span>Blocked</span><div class="track"><div class="fill crit" style="width:5.2%"></div></div><b>3</b></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="speed">
+  <div class="sec-head"><span class="eyebrow">Speed</span><h2>Slow on mobile, unstable on desktop</h2>
+  <p class="muted">Google PageSpeed Insights, homepage, 4 Oct 2026. Google has no real-visitor speed data for the site yet, which is itself a sign of very low traffic.</p></div>
+  <div class="grid2">
+    <div class="box">
+      <h3>Mobile</h3>
+      <div class="bars" role="img" aria-label="Mobile scores: performance 59, accessibility 94, best practices 77, SEO 100">
+        <div class="bar-row"><span>Performance</span><div class="track"><div class="fill warn" style="width:59%"></div></div><b>59</b></div>
+        <div class="bar-row"><span>Accessibility</span><div class="track"><div class="fill good" style="width:94%"></div></div><b>94</b></div>
+        <div class="bar-row"><span>Best practices</span><div class="track"><div class="fill warn" style="width:77%"></div></div><b>77</b></div>
+        <div class="bar-row"><span>SEO</span><div class="track"><div class="fill good" style="width:100%"></div></div><b>100</b></div>
+      </div>
+    </div>
+    <div class="box">
+      <h3>Desktop</h3>
+      <div class="bars" role="img" aria-label="Desktop scores: performance 51, accessibility 94, best practices 77, SEO 100">
+        <div class="bar-row"><span>Performance</span><div class="track"><div class="fill warn" style="width:51%"></div></div><b>51</b></div>
+        <div class="bar-row"><span>Accessibility</span><div class="track"><div class="fill good" style="width:94%"></div></div><b>94</b></div>
+        <div class="bar-row"><span>Best practices</span><div class="track"><div class="fill warn" style="width:77%"></div></div><b>77</b></div>
+        <div class="bar-row"><span>SEO</span><div class="track"><div class="fill good" style="width:100%"></div></div><b>100</b></div>
+      </div>
+    </div>
+  </div>
+  <div class="scroll">
+    <table>
+      <thead><tr><th>Metric</th><th>What it means</th><th>Mobile</th><th>Desktop</th><th>Google's target</th></tr></thead>
+      <tbody>
+        <tr><td>Largest Contentful Paint</td><td>Time until the main content shows</td><td class="n"><span class="tag crit">7.5 s</span></td><td class="n"><span class="tag warn">1.7 s</span></td><td class="n">under 2.5 s</td></tr>
+        <tr><td>First Contentful Paint</td><td>Time until anything shows</td><td class="n"><span class="tag crit">4.7 s</span></td><td class="n"><span class="tag warn">1.1 s</span></td><td class="n">under 1.8 s</td></tr>
+        <tr><td>Speed Index</td><td>How quickly the page fills in</td><td class="n"><span class="tag crit">7.4 s</span></td><td class="n"><span class="tag crit">2.9 s</span></td><td class="n">under 3.4 s mobile</td></tr>
+        <tr><td>Cumulative Layout Shift</td><td>How much the page jumps while loading</td><td class="n"><span class="tag good">0.048</span></td><td class="n"><span class="tag crit">0.834</span></td><td class="n">under 0.1</td></tr>
+        <tr><td>Total Blocking Time</td><td>How long the page ignores taps and clicks</td><td class="n"><span class="tag good">90 ms</span></td><td class="n"><span class="tag warn">260 ms</span></td><td class="n">under 200 ms</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>The two biggest savings Google reports on mobile are render-blocking files (an estimated 5.2 seconds) and image delivery (about 594 KB). On desktop the page content jumps eight times more than Google allows, largely because 88 images have no width and height set.</p>
+</section>
+
+<section id="gaps">
+  <div class="sec-head"><span class="eyebrow">Gaps</span><h2>Eight gaps, ranked by impact</h2></div>
+  <div class="gaps">
+
+    <div class="gap">
+      <div class="gap-head"><h3>1. The menu and footer link to pages that do not exist</h3><span class="tag crit"><span class="led crit"></span>High impact · easy fix</span></div>
+      <p>Ten internal URLs return a 404 error, and most are linked from every page. That is roughly 340 broken links across the site. Visitors hit dead ends, and Google wastes its crawl on them.</p>
+      <ul class="mono">
+        <li>/solutions/cyber-security-solutions/ · 78 links</li>
+        <li>/solutions/video-conference-meeting-room-solutions/ · 78 links</li>
+        <li>/chip-level-servicing/ · 53 links</li>
+        <li>/privacy-policy/, /terms-and-conditions/, /careers/, /solutions/, /softwares/ · 26 links each</li>
+        <li>/contact-us/, /queue-management/ · 1 link each</li>
+      </ul>
+      <p class="fix"><strong>Fix:</strong> point each menu and footer link at the live page, and publish the missing Privacy Policy and Terms pages.</p>
+    </div>
+
+    <div class="gap">
+      <div class="gap-head"><h3>2. Navigation still uses old addresses</h3><span class="tag warn"><span class="led warn"></span>Medium impact · easy fix</span></div>
+      <p>Thirteen old URLs, such as <span class="mono">/solutions/cloud-solutions/</span> and <span class="mono">/server-management/</span>, redirect to the new "in-dubai" pages. The menu links to the old versions about 650 times, so every click takes an extra hop and passes less ranking value.</p>
+      <p class="fix"><strong>Fix:</strong> update the menu, footer and in-page links to the final URLs.</p>
+    </div>
+
+    <div class="gap">
+      <div class="gap-head"><h3>3. Every page has two meta descriptions</h3><span class="tag warn"><span class="led warn"></span>Medium impact · easy fix</span></div>
+      <p>All 26 pages carry a written description plus a second, auto-generated one that dumps up to 4,000 characters of page text. Google may show either, so the search snippet is unpredictable.</p>
+      <p class="fix"><strong>Fix:</strong> remove the duplicate tag (usually two SEO plugins or a theme setting) and keep one description of 150 to 155 characters per page.</p>
+    </div>
+
+    <div class="gap">
+      <div class="gap-head"><h3>4. Images are far too heavy</h3><span class="tag crit"><span class="led crit"></span>High impact · moderate fix</span></div>
+      <p>Twenty-five images are over 100 KB and several are over 1.5 MB. These alone explain most of the 7.5-second mobile load.</p>
+      <ul class="mono">
+        <li>Network-Cables.png · 2.7 MB</li>
+        <li>ChatGPT-Image-Jul-4-2026.png · 2.4 MB</li>
+        <li>Data-recover.png · 2.1 MB</li>
+        <li>It-repairing-chip.png · 1.9 MB</li>
+      </ul>
+      <p class="fix"><strong>Fix:</strong> convert to WebP, resize to display size, aim for under 150 KB each, lazy-load below the fold, and set width and height on every image.</p>
+    </div>
+
+    <div class="gap">
+      <div class="gap-head"><h3>5. Service pages are thin and hard to read</h3><span class="tag crit"><span class="led crit"></span>High impact · ongoing</span></div>
+      <p>Service pages run from 364 to 860 words, and all 26 pages score as "hard" or "very hard" to read. Sentences average about five words, which signals fragmented labels and bullet stubs, not explanations. Competing Dubai IT firms answer buyer questions in depth. Two pages (Data Recovery and Book a Consultation) have no main heading.</p>
+      <p class="fix"><strong>Fix:</strong> rebuild each priority page to 900 to 1,200 words covering scope, process, brands supported, pricing factors, areas served and FAQs.</p>
+    </div>
+
+    <div class="gap">
+      <div class="gap-head"><h3>6. Almost no authority from other websites</h3><span class="tag crit"><span class="led crit"></span>High impact · ongoing</span></div>
+      <p>The site has 81 backlinks and ranks for one keyword. For competitive terms such as "IT solutions in Dubai", Google needs outside proof that the business is real and trusted.</p>
+      <p class="fix"><strong>Fix:</strong> UAE business directories, vendor partner listings, supplier and client mentions, and a steady flow of Google reviews.</p>
+    </div>
+
+    <div class="gap">
+      <div class="gap-head"><h3>7. Trust signals are missing or unproven</h3><span class="tag warn"><span class="led warn"></span>Medium impact · easy fix</span></div>
+      <p>Several page titles claim "No.1 Trusted" or "No.1 Reliable" with nothing to back it up, and four of those titles are too long to display fully. The privacy policy and terms pages are missing, and the careers "Apply Now" form returns an access error.</p>
+      <p class="fix"><strong>Fix:</strong> replace "No.1" with provable claims (years in business, certified engineers, brands, response time), and add client logos, reviews and case studies.</p>
+    </div>
+
+    <div class="gap">
+      <div class="gap-head"><h3>8. An IT security company without basic security headers</h3><span class="tag warn"><span class="led warn"></span>Low SEO impact · credibility risk</span></div>
+      <p>295 URLs are missing standard security headers (HSTS, X-Frame-Options, X-Content-Type-Options, Referrer-Policy). Search rankings are barely affected, but a technical buyer who checks will notice.</p>
+      <p class="fix"><strong>Fix:</strong> add the four headers at server level. It is a one-time change.</p>
+    </div>
+
+  </div>
+</section>
+
+<section id="plan">
+  <div class="sec-head"><span class="eyebrow">Suggestions</span><h2>A 90-day plan</h2>
+  <p class="muted">Repairs first, then content, then authority. Each phase makes the next one more effective.</p></div>
+  <div class="plan">
+    <div class="phase">
+      <span class="when">Days 1 to 30</span><h3>Repair the foundation</h3>
+      <ul>
+        <li>Fix the 10 broken URLs and 13 redirected links in the menu and footer</li>
+        <li>Remove the duplicate meta description on all pages</li>
+        <li>Compress and resize the 25 heavy images; set image dimensions</li>
+        <li>Defer render-blocking scripts; enable caching</li>
+        <li>Add missing H1s, privacy policy and terms pages</li>
+        <li>Set up Search Console, Analytics and call and WhatsApp click tracking</li>
+      </ul>
+    </div>
+    <div class="phase">
+      <span class="when">Days 31 to 60</span><h3>Deepen the content</h3>
+      <ul>
+        <li>Rewrite the top 8 service pages around the keyword map below</li>
+        <li>Rewrite titles without "No.1"; keep them under 60 characters</li>
+        <li>Add FAQ and LocalBusiness structured data</li>
+        <li>Claim or complete the Google Business Profile with services, photos and reviews</li>
+        <li>Publish the first 4 buyer guides</li>
+      </ul>
+    </div>
+    <div class="phase">
+      <span class="when">Days 61 to 90</span><h3>Build authority and demand</h3>
+      <ul>
+        <li>List on UAE directories and vendor partner pages</li>
+        <li>Publish 3 client case studies</li>
+        <li>Launch area pages for the main business districts</li>
+        <li>Start a focused Google Ads campaign on the highest-intent services</li>
+        <li>Review rankings and leads; set the next quarter's targets</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="opportunities">
+  <div class="sec-head"><span class="eyebrow">Opportunities</span><h2>Where the growth is</h2></div>
+  <div class="opps">
+    <div class="opp"><h3>Recurring-revenue services first</h3><p>IT AMC, managed IT and IT outsourcing bring contract income, and buyers search for them with clear intent. These pages deserve the deepest content and the first ad budget.</p></div>
+    <div class="opp"><h3>The homepage says UAE, the pages say Dubai</h3><p>The headline promises "businesses across the UAE", but every service page targets Dubai only. Pages for Abu Dhabi and Sharjah would open two more markets with little extra effort.</p></div>
+    <div class="opp"><h3>Business-district pages</h3><p>Office IT is bought locally. Pages for Business Bay, DIFC, JLT, Deira, Al Quoz and Jebel Ali free zone match how companies search for a nearby provider.</p></div>
+    <div class="opp"><h3>Google Business Profile and reviews</h3><p>"Near me" and map results drive most local service calls. A complete profile with regular reviews is the fastest route to visibility while organic rankings build.</p></div>
+    <div class="opp"><h3>Buyer guides that answer cost questions</h3><p>The site has no blog or resource section. Guides on AMC pricing, CCTV installation cost and new-office IT checklists capture buyers early and earn links.</p></div>
+    <div class="opp"><h3>Product pages by brand</h3><p>The products page lists Apple, laptops and projectors on a single page. Separate brand and category pages can rank for supplier searches and support bulk enquiries.</p></div>
+    <div class="opp"><h3>Proof: case studies and partner badges</h3><p>B2B buyers want evidence. Project write-ups with numbers, client logos and vendor certifications turn visitors into enquiries.</p></div>
+    <div class="opp"><h3>Answers for AI search</h3><p>Clear question-and-answer sections and structured data help the site get quoted in Google's AI answers and in assistants, where competitors are still weak.</p></div>
+  </div>
+</section>
+
+<section id="keywords">
+  <div class="sec-head"><span class="eyebrow">Keywords</span><h2>SEO keyword map</h2>
+  <p class="muted">Each cluster is matched to the page that should rank for it. Priority reflects buying intent and how well the service fits recurring revenue.</p></div>
+  <p class="note"><strong>Search volumes are not included.</strong> Live volume and difficulty data was not available for this report. The terms below are chosen from the site's services and how Dubai buyers search; they should be validated with volume data before the content work starts.</p>
+  <div class="scroll">
+    <table>
+      <thead><tr><th>Cluster</th><th>Primary keyword</th><th>Supporting keywords</th><th>Target page</th><th>Priority</th></tr></thead>
+      <tbody>
+        <tr><td>Core</td><td>it solutions in dubai</td><td>it company in dubai, it services company dubai, it support dubai</td><td class="mono">/ and /it-solutions-in-dubai/</td><td><span class="tag crit">High</span></td></tr>
+        <tr><td>AMC</td><td>it amc services dubai</td><td>annual maintenance contract dubai, computer amc dubai, it amc cost dubai</td><td class="mono">/reliable-it-amc-services-dubai-annual-maintenance/</td><td><span class="tag crit">High</span></td></tr>
+        <tr><td>Managed IT</td><td>managed it services dubai</td><td>it support for small business dubai, it helpdesk dubai</td><td class="mono">/managed-it-service-in-dubai/</td><td><span class="tag crit">High</span></td></tr>
+        <tr><td>Outsourcing</td><td>it outsourcing dubai</td><td>outsourced it support uae, it staff outsourcing dubai</td><td class="mono">/it-outsourcing-in-dubai/</td><td><span class="tag crit">High</span></td></tr>
+        <tr><td>Office setup</td><td>office it setup dubai</td><td>new office network setup dubai, it relocation services dubai</td><td class="mono">/new-office-it-setup-in-dubai/</td><td><span class="tag crit">High</span></td></tr>
+        <tr><td>Cabling</td><td>structured cabling dubai</td><td>structured cabling companies in dubai, cat6 cabling installation dubai</td><td class="mono">/structured-cabling-solutions-in-dubai/</td><td><span class="tag crit">High</span></td></tr>
+        <tr><td>CCTV</td><td>cctv installation dubai</td><td>cctv camera installation company dubai, office cctv setup dubai</td><td class="mono">/cctv-security-setup-in-dubai/</td><td><span class="tag crit">High</span></td></tr>
+        <tr><td>Cybersecurity</td><td>cybersecurity solutions dubai</td><td>cyber security company dubai, firewall installation dubai</td><td class="mono">/cybersecurity-solutions-dubai/</td><td><span class="tag crit">High</span></td></tr>
+        <tr><td>Fiber</td><td>fiber optic cabling dubai</td><td>fiber splicing dubai, fiber cable installation dubai</td><td class="mono">/fiber-cabling-splicing-in-dubai/</td><td><span class="tag warn">Medium</span></td></tr>
+        <tr><td>Access control</td><td>access control system dubai</td><td>biometric attendance system dubai, door access control dubai</td><td class="mono">/biometric-door-access-solutions-in-dubai/</td><td><span class="tag warn">Medium</span></td></tr>
+        <tr><td>Servers</td><td>server management dubai</td><td>server installation dubai, server maintenance dubai</td><td class="mono">/server-management-services-in-dubai/</td><td><span class="tag warn">Medium</span></td></tr>
+        <tr><td>Data recovery</td><td>data recovery dubai</td><td>hard disk data recovery dubai, raid data recovery dubai</td><td class="mono">/data-recovery-services-in-dubai/</td><td><span class="tag warn">Medium</span></td></tr>
+        <tr><td>Cloud</td><td>cloud solutions dubai</td><td>cloud backup dubai, cloud migration services dubai</td><td class="mono">/cloud-solutions-in-dubai/</td><td><span class="tag warn">Medium</span></td></tr>
+        <tr><td>Email</td><td>business email solutions dubai</td><td>microsoft 365 setup dubai, google workspace setup dubai</td><td class="mono">/email-solutions-in-dubai/</td><td><span class="tag warn">Medium</span></td></tr>
+        <tr><td>Wi-Fi</td><td>office wifi installation dubai</td><td>wireless network solutions dubai, wifi setup for office dubai</td><td class="mono">/wireless-internet-solutions-in-dubai/</td><td><span class="tag warn">Medium</span></td></tr>
+        <tr><td>Endpoint</td><td>endpoint protection dubai</td><td>antivirus for business dubai, endpoint security uae</td><td class="mono">/antivirus-endpoint-protection-in-dubai/</td><td><span class="tag warn">Medium</span></td></tr>
+        <tr><td>Meeting rooms</td><td>meeting room solutions dubai</td><td>video conferencing setup dubai, conference room av dubai</td><td class="mono">/meeting-room-solutions-in-dubai/</td><td><span class="tag info">Lower</span></td></tr>
+        <tr><td>Data centre</td><td>data center solutions dubai</td><td>server room setup dubai, rack installation dubai</td><td class="mono">/data-center-solutions-dubai/</td><td><span class="tag info">Lower</span></td></tr>
+        <tr><td>Gate barriers</td><td>gate barrier dubai</td><td>automatic boom barrier dubai, parking barrier system dubai</td><td class="mono">/automated-gate-barrier-in-dubai/</td><td><span class="tag info">Lower</span></td></tr>
+        <tr><td>Software</td><td>business software solutions dubai</td><td>erp software dubai, accounting software dubai</td><td class="mono">/business-software-solutions-in-dubai/</td><td><span class="tag info">Lower</span></td></tr>
+        <tr><td>Products</td><td>it hardware supplier dubai</td><td>laptop supplier dubai, bulk laptops for business dubai</td><td class="mono">/genuine-it-products/</td><td><span class="tag info">Lower</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>Guide topics for a new resources section</h3>
+  <div class="scroll">
+    <table>
+      <thead><tr><th>Search question</th><th>Guide to publish</th><th>Feeds this service page</th></tr></thead>
+      <tbody>
+        <tr><td>it amc cost in dubai</td><td>What an IT AMC costs in Dubai and what it should include</td><td>IT AMC</td></tr>
+        <tr><td>cctv installation cost dubai</td><td>CCTV installation cost for offices, by camera count</td><td>CCTV</td></tr>
+        <tr><td>it checklist for new office</td><td>The IT checklist for opening an office in Dubai</td><td>New office IT setup</td></tr>
+        <tr><td>managed it vs in-house it</td><td>Managed IT or an in-house team: cost comparison for a 20-person office</td><td>Managed IT, IT outsourcing</td></tr>
+        <tr><td>cat6 vs cat6a vs fiber</td><td>Which cabling does your office need?</td><td>Structured cabling, fiber</td></tr>
+        <tr><td>how to choose it support company dubai</td><td>Ten questions to ask an IT support provider</td><td>Core</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<footer>
+  <p><strong>Sources:</strong> Ubersuggest site audit (58 URLs), Screaming Frog issues export (26 pages, 33 issue sheets), Google PageSpeed Insights mobile and desktop runs, and a review of the live homepage. All dated 4 October 2026.</p>
+  <p>Traffic, keyword and backlink counts are third-party estimates and will differ from Google Search Console figures once that is connected.</p>
+</footer>
+
+</div>
